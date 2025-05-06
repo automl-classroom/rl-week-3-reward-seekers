@@ -5,6 +5,7 @@ then runs multiple episodes and returns the average total reward.
 """
 
 import hydra
+import numpy as np
 from hydra.utils import instantiate
 from omegaconf import DictConfig
 
@@ -34,7 +35,15 @@ def run_episodes(agent, env, num_episodes=5):
     # Currently, the funciton runs only one episode and returns the total reward without discounting.
     # Extend it to run multiple episodes and store the total discounted rewards in a list.
     # Finally, return the mean discounted reward across episodes.
+    total_rewards = np.zeros(num_episodes, dtype=float)
+    for i in range(num_episodes):
+        total = run_single_episode(agent, env)
+        total_rewards.append(total)
 
+    return np.mean(total_rewards)
+
+
+def run_single_episode(agent, env):
     total = 0.0
     state, _ = env.reset()
     done = False

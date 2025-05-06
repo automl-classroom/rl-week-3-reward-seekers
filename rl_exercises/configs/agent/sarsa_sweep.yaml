@@ -7,8 +7,8 @@ defaults:
 
 # Global flags
 seed: 42                             # Seed for reproducibility (env, policy, etc.)
-n_trials: ???                        # TODO: Define the number of trials to be run 
-num_episodes: ???                    # TODO: Define the number of episodes to run for each trial
+n_trials: 50                        # TODO: Define the number of trials to be run 
+num_episodes: 20                    # TODO: Define the number of episodes to run for each trial
 
 # Hydra output & sweeper settings
 hydra:
@@ -34,27 +34,62 @@ env:
       - [1, 1]
       - [1, 1]
       - [1, 1]
-  rewards: ???                        # Reward per cell index
-  horizon: ???                        # Max steps per episode
+  rewards:                         # Reward per cell index
+      - 0
+      - 0
+      - 0
+      - 0
+      - 10
+  horizon: 10                        # Max steps per episode
   seed: ${seed}                       # Pass same seed into the env constructor
 
 
 # TODO: instantiate the EpsilonGreedyPolicy in Hydra. Replace the ???s with your specification
 policy:
   _target_: rl_exercises.week_3.EpsilonGreedyPolicy
-  epsilon: ???                        # TODO: Initial exploration rate
+  epsilon: 0.3                        # TODO: Initial exploration rate
   seed: ${seed}                       # Seed for the policy’s internal RNG
 
 
 # TODO: instantiate the SARSA agent in Hydra. Replace the ???s with your specification
 agent:
   _target_: rl_exercises.week_3.SARSAAgent
-  alpha: ???                          # TODO: Define the inital learning rate
-  gamma: ???                          # TODO: Define the discount factor
+  alpha: 0.1                          # TODO: Define the inital learning rate
+  gamma: 1.0                          # TODO: Define the discount factor
 
 
 # TODO: Define the search space for the hyperparameters to be swept. Replace the ???s with your specification
 # see https://github.com/automl/hypersweeper/blob/main/examples/configs/search_space/sac.yaml for an example
 search_space:
-  seed: ${seed}                      # Seed for the sweeper’s random number generator
-  hyperparameters: ???
+  seed: ${seed} 
+  hyperparameters: 
+    alpha: 
+      _target_: hypersweeper.uniform_float
+      low: 0.001
+      high: 0.1
+      step: 0.001
+      log: true
+    gamma: 
+      _target_: hypersweeper.uniform_float
+      low: 0.1
+      high: 1.0
+      step: 0.1
+      log: true
+    epsilon: 
+      _target_: hypersweeper.uniform_float
+      low: 0.1
+      high: 1.0
+      step: 0.1
+      log: true
+    num_episodes:   
+      _target_: hypersweeper.uniform_int
+      low: 10
+      high: 100
+      step: 10
+      log: false 
+    n_trials: 
+      _target_: hypersweeper.uniform_int
+      low: 1
+      high: 10
+      step: 1
+      log: false
