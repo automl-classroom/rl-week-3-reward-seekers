@@ -133,4 +133,13 @@ class SARSAAgent(AbstractAgent):
         # update the new Q value in the Q table of this class.
         # Return the new Q value --currently always returns 0.0
 
+        if done:
+            target = reward
+        else:
+            target = reward + self.gamma * self.Q[next_state][next_action]
+
+        self.Q[state][action] += self.alpha * (target - self.Q[state][action])
+
+        return self.Q[state][action]
+
         return 0.0
